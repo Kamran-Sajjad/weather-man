@@ -1,42 +1,71 @@
 import { weatherData } from "./combined-weather-data.js";
-import { printSummary } from "./functions.js";
+import { formatDate } from "./utils.js";
 
 export const getYearlySummary = (data, year) => {
-  const yearlyData = data.filter((item) => {
-    return new Date(item.date).getFullYear() === year;
+  const yearlyFilteredData = data.filter(
+    (item) => new Date(item.date).getFullYear() === year
+  );
+
+  if (yearlyFilteredData.length === 0)
+    console.log(`No weather data found for year ${year}`);
+
+  const highestTemperatureOfYear = {
+    temperature: parseInt(yearlyFilteredData[0].maxTemperatureC),
+    date: yearlyFilteredData[0].date,
+  };
+  const lowestTemperatureOfYear = {
+    temperature: parseInt(yearlyFilteredData[0].minTemperatureC),
+    date: yearlyFilteredData[0].date,
+  };
+  const humidityOfYear = {
+    level: parseInt(yearlyFilteredData[0].maxHumidity),
+    date: yearlyFilteredData[0].date,
+  };
+
+  yearlyFilteredData.forEach((record) => {
+    highestTemperatureOfYear.date =
+      parseInt(record.maxTemperatureC) > highestTemperatureOfYear.temperature
+        ? record.date
+        : highestTemperatureOfYear.date;
+    highestTemperatureOfYear.temperature =
+      parseInt(record.maxTemperatureC) > highestTemperatureOfYear.temperature
+        ? parseInt(record.maxTemperatureC)
+        : highestTemperatureOfYear.temperature;
+
+    lowestTemperatureOfYear.date =
+      parseInt(record.minTemperatureC) < lowestTemperatureOfYear.temperature
+        ? record.date
+        : lowestTemperatureOfYear.date;
+    lowestTemperatureOfYear.temperature =
+      parseInt(record.minTemperatureC) < lowestTemperatureOfYear.temperature
+        ? parseInt(record.minTemperatureC)
+        : lowestTemperatureOfYear.temperature;
+
+    humidityOfYear.date =
+      parseInt(record.maxHumidity) > humidityOfYear.level
+        ? record.date
+        : humidityOfYear.date;
+    humidityOfYear.level =
+      parseInt(record.maxHumidity) > humidityOfYear.level
+        ? parseInt(record.maxHumidity)
+        : humidityOfYear.level;
   });
 
-  if (yearlyData.length === 0) {
-    throw new Error(`No weather data found for year ${year}`);
-  }
-
-  let highest = {
-    temp: parseInt(yearlyData[0].maxTemperatureC),
-    date: yearlyData[0].date,
-  };
-  let lowest = {
-    temp: parseInt(yearlyData[0].minTemperatureC),
-    date: yearlyData[0].date,
-  };
-  let humidity = {
-    level: parseInt(yearlyData[0].maxHumidity),
-    date: yearlyData[0].date,
-  };
-
-  yearlyData.forEach((record) => {
-    const maxTemp = parseInt(record.maxTemperatureC);
-    const minTemp = parseInt(record.minTemperatureC);
-    const humid = parseInt(record.maxHumidity);
-
-    if (maxTemp > highest.temp) highest = { temp: maxTemp, date: record.date };
-    if (minTemp < lowest.temp) lowest = { temp: minTemp, date: record.date };
-    if (humid > humidity.level) humidity = { level: humid, date: record.date };
-  });
-
-  return { highest, lowest, humidity };
+  console.log(
+    `Highest: ${highestTemperatureOfYear.temperature}°C on ${formatDate(
+      highestTemperatureOfYear.date
+    )}`
+  );
+  console.log(
+    `Lowest: ${lowestTemperatureOfYear.temperature}°C on ${formatDate(
+      lowestTemperatureOfYear.date
+    )}`
+  );
+  console.log(
+    `Humidity: ${humidityOfYear.level}% on ${formatDate(humidityOfYear.date)}`
+  );
 };
 
 const year = 2013;
-console.log(`Weather summary for year ${year}:`);
-const summary = getYearlySummary(weatherData, year);
-printSummary(summary);
+console.log(`\n-----------Weather summary for year ${year}----------------------\n`);
+getYearlySummary(weatherData, year);
