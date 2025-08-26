@@ -1,5 +1,5 @@
 import { weatherData } from "./combined-weather-data.js";
-
+import { checkIsEmptyData } from "./utils.js";
 export const getMonthlyReport = (data, year, month) => {
   const monthlyFilteredData = data.filter((item) => {
     if (!item.date) return false;
@@ -8,33 +8,31 @@ export const getMonthlyReport = (data, year, month) => {
     return parseInt(yearFromDate) === year && parseInt(monthFromDate) === month;
   });
 
-  if (monthlyFilteredData.length === 0) {
-    console.log(`No weather data found for month ${year} ${month}`);
-    return;
-  }
-  let sumOfMaximumTemperature = 0;
-  let sumOfMinimumTemperature = 0;
-  let sumOfMeanHumidity = 0;
+  if(checkIsEmptyData(monthlyFilteredData)) return;
+
+  let maximumTemperatureSum = 0;
+  let minimumTemperatureSum = 0;
+  let meanHumiditySum = 0;
 
   monthlyFilteredData.forEach((record) => {
-    sumOfMaximumTemperature += parseInt(record.maxTemperatureC);
-    sumOfMinimumTemperature += parseInt(record.minTemperatureC);
-    sumOfMeanHumidity += parseInt(record.meanHumidity);
+    maximumTemperatureSum += parseInt(record.maxTemperatureC);
+    minimumTemperatureSum += parseInt(record.minTemperatureC);
+    meanHumiditySum += parseInt(record.meanHumidity);
   });
 
   console.log(
     `Highest Temperature Average: ${Math.round(
-      sumOfMaximumTemperature / monthlyFilteredData.length
+      maximumTemperatureSum / monthlyFilteredData.length
     )}°C`
   );
   console.log(
     `Lowest Temperature Average: ${Math.round(
-      sumOfMinimumTemperature / monthlyFilteredData.length
+      minimumTemperatureSum / monthlyFilteredData.length
     )}°C `
   );
   console.log(
     `Average Mean Humidity: ${Math.round(
-      sumOfMeanHumidity / monthlyFilteredData.length
+      meanHumiditySum / monthlyFilteredData.length
     )}% `
   );
 };

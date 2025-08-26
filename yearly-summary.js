@@ -1,5 +1,5 @@
 import { weatherData } from "./combined-weather-data.js";
-import { formatDate } from "./utils.js";
+import { formatDate,checkIsEmptyData } from "./utils.js";
 
 export const getYearlySummary = (data, year) => {
   const yearlyFilteredData = data.filter((item) => {
@@ -8,31 +8,25 @@ export const getYearlySummary = (data, year) => {
     return parseInt(yearFromDate) === year;
   });
 
-  if (yearlyFilteredData.length === 0) {
-    console.log(`No weather data found for year ${year}`);
-    return;
-  }
+
+  if(checkIsEmptyData(yearlyFilteredData)) return;
 
   let highestTemperatureOfYear = yearlyFilteredData[0];
   let lowestTemperatureOfYear = yearlyFilteredData[0];
   let humidityOfYear = yearlyFilteredData[0];
 
   yearlyFilteredData.forEach((record) => {
-    highestTemperatureOfYear =
+    if (
       parseInt(record.maxTemperatureC) >
       highestTemperatureOfYear.maxTemperatureC
-        ? record
-        : highestTemperatureOfYear;
-
-    lowestTemperatureOfYear =
+    )
+      highestTemperatureOfYear = record;
+    if (
       parseInt(record.minTemperatureC) < lowestTemperatureOfYear.minTemperatureC
-        ? record
-        : lowestTemperatureOfYear;
-
-    humidityOfYear =
-      parseInt(record.maxHumidity) > humidityOfYear.maxHumidity
-        ? record
-        : humidityOfYear;
+    )
+      lowestTemperatureOfYear = record;
+    if (parseInt(record.maxHumidity) > humidityOfYear.maxHumidity)
+      humidityOfYear = record;
   });
 
   console.log(

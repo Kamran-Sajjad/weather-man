@@ -1,25 +1,20 @@
 import { weatherData } from "./combined-weather-data.js";
-import { createBar } from "./utils.js";
+import { createBar,checkIsEmptyData } from "./utils.js";
 
 export const getDailyChart = (data, year, month) => {
   const monthlyFilteredData = data.filter((item) => {
     const date = new Date(item.date);
     return date.getFullYear() === year && date.getMonth() + 1 === month;
   });
-  if (monthlyFilteredData.length === 0) {
-    console.log(`No weather data found for ${year}/${month}`);
-    return;
-  }
+if(checkIsEmptyData(monthlyFilteredData)) return;
 
   monthlyFilteredData.forEach((record) => {
     const date = new Date(record.date);
     const day = String(date.getDate()).padStart(2, "0");
-    const maximumTemperature = parseInt(record.maxTemperatureC);
-    const minimumTemperature = parseInt(record.minTemperatureC);
-    const maximumTemperatureBar = createBar(maximumTemperature, "\x1b[31m");
-    const minimumTemperatureBar = createBar(minimumTemperature, "\x1b[34m");
-    console.log(`${day} ${maximumTemperatureBar} ${maximumTemperature}C`);
-    console.log(`${day} ${minimumTemperatureBar} ${minimumTemperature}C`);
+    const maximumTemperatureBar = createBar(parseInt(record.maxTemperatureC), "\x1b[31m");
+    const minimumTemperatureBar = createBar(parseInt(record.minTemperatureC), "\x1b[34m");
+    console.log(`${day} ${maximumTemperatureBar} ${parseInt(record.maxTemperatureC)}C`);
+    console.log(`${day} ${minimumTemperatureBar} ${parseInt(record.minTemperatureC)}C`);
   });
 };
 
