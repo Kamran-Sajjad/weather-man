@@ -10,24 +10,24 @@ export const getMonthlyReport = (data, year, month) => {
 
   if(checkIsEmptyData(monthlyFilteredData)) return;
 
-  let maximumTemperatureSum = 0;
-  let minimumTemperatureSum = 0;
+  let maximumTemperaturesSum = 0;
+  let minimumTemperaturesSum = 0;
   let meanHumiditySum = 0;
 
   monthlyFilteredData.forEach((record) => {
-    maximumTemperatureSum += parseInt(record.maxTemperatureC);
-    minimumTemperatureSum += parseInt(record.minTemperatureC);
+    maximumTemperaturesSum += parseInt(record.maxTemperatureC);
+    minimumTemperaturesSum += parseInt(record.minTemperatureC);
     meanHumiditySum += parseInt(record.meanHumidity);
   });
 
   console.log(
     `Highest Temperature Average: ${Math.round(
-      maximumTemperatureSum / monthlyFilteredData.length
+      maximumTemperaturesSum / monthlyFilteredData.length
     )}°C`
   );
   console.log(
     `Lowest Temperature Average: ${Math.round(
-      minimumTemperatureSum / monthlyFilteredData.length
+      minimumTemperaturesSum / monthlyFilteredData.length
     )}°C `
   );
   console.log(
